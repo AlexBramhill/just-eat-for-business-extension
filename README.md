@@ -1,7 +1,6 @@
-# Jira Copy Buttons
+# Unofficial Just Eat for Business Chrome Extension
 
-![alt text](readme-assets/exampleTicket.png)
-A Chrome extension that adds buttons to Jira to easily copy Jira ticket identifiers and titles in a customisable format.
+A Chrome extension that adds buttons to Just Eat for Business
 
 ## Development
 
