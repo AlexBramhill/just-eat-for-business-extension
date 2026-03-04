@@ -1,0 +1,28 @@
+{
+  "name": "Just Eat For Business Extension",
+  "description": "Unofficial extension to add a range of features to the Just Eat For Business web app",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_title": "Just Eat For Business Extension",
+    "default_popup": "pages/popup.html"
+  },
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ],
+      "js": [
+        "content/index.js"
+      ]
+    }
+  ],
+  "permissions": [
+    "storage"
+  ]
+}
