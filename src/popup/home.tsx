@@ -1,9 +1,13 @@
+import NewTabToggle from "./features/NewTabToggle.tsx";
+import MainContainer from "./components/MainContainer.tsx";
+
 export const Home = () => {
     return (
-        <div>
+        <MainContainer>
             <h1 class="text-2xl font-bold">Home</h1>
             <p>Welcome to the home page!</p>
-        </div>
+            <NewTabToggle/>
+        </MainContainer>
     )
 }
 
