@@ -1,9 +1,14 @@
 import type {Feature} from "./features.ts";
 import {selectElementByTestId, selectElementsByTestId} from "../elementSelectors.ts";
 import {cartCache} from "../cache/cartCache.ts";
-import type {CartCacheStorage} from "../../shared/repositories/storageSchemas.ts";
+import {
+    type CartCacheStorage,
+    newTabToggleDefaultValue,
+    STORAGE_KEYS
+} from "../../shared/repositories/storageSchemas.ts";
 import {z} from "zod";
 import {getMyMealsRestaurantUrl} from "../justEatPageList.ts";
+import {createStorageConnection} from "../../shared/repositories/storageConnection.ts";
 
 const getCardsWithChooseButton = (cards: HTMLElement[]) => cards.filter((card) => {
     const chooseButton = selectElementByTestId("button", card);
@@ -17,8 +22,9 @@ const getIdFromHumanId = (humanOrderId: number, cartCacheStorage: CartCacheStora
 };
 
 export const newTabToggle: Feature = {
-    shouldRun(): boolean {
-        return true; // TODO: Link this up with button
+    async shouldRun(): Promise<boolean> {
+        const store = createStorageConnection(STORAGE_KEYS.NEW_TAB_TOGGLE, newTabToggleDefaultValue)
+        return (await store.get()).isEnabled;
     },
     async run(): Promise<void> {
         const cards = selectElementsByTestId("eaterOption");

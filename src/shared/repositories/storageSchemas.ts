@@ -3,6 +3,10 @@ export const STORAGE_KEYS = {
     CART_CACHE: "cartCache",
 } as const;
 
+export const newTabToggleDefaultValue: NewTabToggleStorage = {
+    isEnabled: true
+}
+
 export type NewTabToggleStorage = {
     isEnabled: boolean;
 };

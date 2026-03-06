@@ -1,7 +1,7 @@
 import newTabToggle from "./newTabToggle.ts";
 
 export type Feature = {
-    shouldRun: () => boolean;
+    shouldRun: () => Promise<boolean>;
     run: () => Promise<void>;
 }
 
