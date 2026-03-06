@@ -36,7 +36,6 @@ const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CAR
     const response = await getCartInformation();
     if (!response) return;
 
-    // Todo: Zod
     const items = response.items.map((item): CartCacheStorageItem => ({
         orderId: item.eaterOptions.orderId,
         humanOrderId: item.eaterOptions.orderHumanId,
