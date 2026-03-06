@@ -14,8 +14,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://*/*",
-        "http://*/*"
+        "https://app.business.just-eat.co.uk/*"
       ],
       "js": [
         "content/index.js"
