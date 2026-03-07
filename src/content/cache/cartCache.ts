@@ -6,6 +6,7 @@ import {
 } from "../../shared/repositories/storageSchemas.ts";
 import {getSodToday} from "../dateHelpers.ts";
 import {getCartInformation} from "../clients/justEatClient.ts";
+import {logger} from "../../shared/logger.ts";
 
 // Todo: Allow nullable default values
 const cartCacheDefault: CartCacheStorage = {
@@ -22,9 +23,11 @@ const get = async () => {
     const currentValue = await cacheStore.get();
 
     if (!isCacheStale(currentValue)) {
+        logger.debug({ date: currentValue.date, itemCount: currentValue.items.length }, "cartCache: cache hit");
         return currentValue;
     }
 
+    logger.debug({ cachedDate: currentValue.date }, "cartCache: cache stale, fetching fresh data");
     const newValue = await updateCache(cacheStore);
     return newValue ?? currentValue; // Todo: update handling of undefined better
 }
@@ -46,6 +49,7 @@ const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CAR
         items
     }
     await cacheStore.set(newCacheState)
+    logger.debug({ itemCount: items.length }, "cartCache: cache updated");
 
     return newCacheState;
 }

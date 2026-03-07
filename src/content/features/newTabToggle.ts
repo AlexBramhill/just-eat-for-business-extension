@@ -9,6 +9,7 @@ import {
 import {z} from "zod";
 import {getMyMealsRestaurantUrl} from "../justEatPageList.ts";
 import {createStorageConnection} from "../../shared/repositories/storageConnection.ts";
+import {logger} from "../../shared/logger.ts";
 
 const getCardsWithChooseButton = (cards: HTMLElement[]) => cards.filter((card) => {
     const chooseButton = selectElementByTestId("button", card);
@@ -24,15 +25,20 @@ const getIdFromHumanId = (humanOrderId: number, cartCacheStorage: CartCacheStora
 export const newTabToggle: Feature = {
     async shouldRun(): Promise<boolean> {
         const store = createStorageConnection(STORAGE_KEYS.NEW_TAB_TOGGLE, newTabToggleDefaultValue)
-        return (await store.get()).isEnabled;
+        const isEnabled = (await store.get()).isEnabled;
+        logger.debug({ isEnabled }, "newTabToggle.shouldRun");
+        return isEnabled;
     },
     async run(): Promise<void> {
         const cards = selectElementsByTestId("eaterOption");
+        logger.debug({ count: cards.length }, "newTabToggle.run: found eaterOption cards");
 
         const cardsWithChooseButton = getCardsWithChooseButton(cards);
+        logger.debug({ count: cardsWithChooseButton.length }, "newTabToggle.run: cards with choose button");
 
         const cartCacheStorage = await cartCache.get();
 
+        let replaced = 0;
         cardsWithChooseButton.forEach((card) => {
 
             const humanIdElement = selectElementByTestId("orderHumanId", card);
@@ -40,23 +46,24 @@ export const newTabToggle: Feature = {
             const humanOrderId = z.coerce.number().safeParse(rawHumanOrderIdText);
 
             if (!humanOrderId.success) {
-                console.warn("Could not find human ID for card, skipping:", card);
+                logger.warn({ rawText: rawHumanOrderIdText }, "Could not find human ID for card, skipping");
                 return;
             }
 
             const id = getIdFromHumanId(humanOrderId.data, cartCacheStorage);
             if (!id) {
-                console.warn("Could not find order ID for human ID, skipping:", humanOrderId.data);
+                logger.warn({ humanOrderId: humanOrderId.data }, "Could not find order ID for human ID, skipping");
                 return;
             }
 
             const button = selectElementByTestId("chooseMeal", card);
             if (!button) {
-                console.warn("Could not find choose button for card, skipping:", card);
+                logger.warn({ humanOrderId: humanOrderId.data }, "Could not find choose button for card, skipping");
                 return;
             }
 
             const myMealsRestaurantUrl = getMyMealsRestaurantUrl(id);
+            logger.debug({ humanOrderId: humanOrderId.data, orderId: id, url: myMealsRestaurantUrl }, "newTabToggle.run: replacing button with link");
 
             const link = document.createElement("a");
             link.href = myMealsRestaurantUrl;
@@ -66,7 +73,10 @@ export const newTabToggle: Feature = {
             link.className = button.className;
 
             button.replaceWith(link);
+            replaced++;
         });
+
+        logger.debug({ replaced }, "newTabToggle.run: done");
     }
 
 }

@@ -1,6 +1,7 @@
 import {JUST_EAT_CART_API_URL} from "../justEatPageList.ts";
 import {getSodToday} from "../dateHelpers.ts";
 import {z} from "zod";
+import {logger} from "../../shared/logger.ts";
 
 const JustEatCartItemSchema = z.object({
     eaterOptions: z.object({
@@ -20,6 +21,9 @@ export const getCartInformation = async (): Promise<JustEatCartInformationRespon
     const now = getSodToday();
     const url = new URL(JUST_EAT_CART_API_URL);
     url.searchParams.set('from', now.toISOString());
+    logger.debug({ url: url.toString() }, "justEatClient: fetching cart information");
     const response = await fetch(url, {credentials: 'include'});
-    return JustEatCartInformationResponseSchema.parse(await response.json());
+    const parsed = JustEatCartInformationResponseSchema.parse(await response.json());
+    logger.debug({ itemCount: parsed.items.length }, "justEatClient: cart information received");
+    return parsed;
 }
