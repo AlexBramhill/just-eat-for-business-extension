@@ -1,12 +1,12 @@
 import {logger} from "../shared/logger";
 import {features} from "./features/features.ts";
 
-const processPage = () => {
-    features.forEach(feature => {
-        if (feature.shouldRun()) {
-            feature.run();
+const processPage = async () => {
+    for (const feature of features) {
+        if (await feature.shouldRun()) {
+            await feature.run();
         }
-    });
+    }
 };
 
 const observer = new MutationObserver(() => {
