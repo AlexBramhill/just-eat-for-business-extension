@@ -24,7 +24,7 @@ export const createStorageConnection = <K extends keyof StorageSchemas>(
 
         if (storedValue !== undefined) {
             logger.debug({key, value: storedValue}, "storageConnection: get (stored)");
-            return storedValue as StorageSchemas[K];
+            return parser.parse(storedValue);
         }
 
         logger.debug({key, value: defaultValue}, "storageConnection: get (default)");
