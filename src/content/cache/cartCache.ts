@@ -35,11 +35,7 @@ const get = async () => {
     return newValue ?? currentValue; // Todo: update handling of undefined better
 }
 
-const isCacheStale = (cacheState: CartCacheStorage): boolean => {
-    console.debug({time: cacheState.date, isDate: cacheState.date instanceof Date}, "***");
-    console.debug({time: getSodToday()}, "***")
-    return cacheState.date.getTime() === getSodToday().getTime()
-};
+const isCacheStale = (cacheState: CartCacheStorage): boolean => cacheState.date.getTime() === getSodToday().getTime();
 
 const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CART_CACHE>) => {
     const response: JustEatCartInformationResponse = await getCartInformation();
