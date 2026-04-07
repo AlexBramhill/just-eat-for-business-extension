@@ -40,50 +40,52 @@ export const newTabToggle: Feature = {
 
         const cartCacheStorage = await cartCache.get();
 
-        let replaced = 0;
-        cardsWithChooseButton.forEach((card) => {
-            const humanIdElement = selectElementByTestId(ORDER_HUMAN_ID_TEST_ID, card);
-            const rawHumanOrderIdText = humanIdElement?.textContent?.trim().replace('- Order ', '');
-            const humanOrderId = z.coerce.number().safeParse(rawHumanOrderIdText);
+        cardsWithChooseButton.forEach(x => updateCardButtonWithLink(x, cartCacheStorage));
+    }
+}
 
-            if (!humanOrderId.success) {
-                logger.warn({rawText: rawHumanOrderIdText}, "Could not find human ID for card, skipping");
-                return;
-            }
+const updateCardButtonWithLink = (card: HTMLElement, cartCacheStorage: CartCacheStorage) => {
+    const humanIdElement = selectElementByTestId(ORDER_HUMAN_ID_TEST_ID, card);
+    const rawHumanOrderIdText = humanIdElement?.textContent?.trim().replace('- Order ', '');
+    const humanOrderId = z.coerce.number().safeParse(rawHumanOrderIdText);
 
-            const id = getIdFromHumanId(humanOrderId.data, cartCacheStorage);
-            if (!id) {
-                logger.warn({humanOrderId: humanOrderId.data}, "Could not find order ID for human ID, skipping");
-                return;
-            }
-
-            const button = selectElementByTestId(CHOOSE_MEAL_BUTTON_TEST_ID, card);
-            if (!button) {
-                logger.warn({humanOrderId: humanOrderId.data}, "Could not find choose button for card, skipping");
-                return;
-            }
-
-            const myMealsRestaurantUrl = getMyMealsRestaurantUrl(id);
-            logger.debug({
-                humanOrderId: humanOrderId.data,
-                orderId: id,
-                url: myMealsRestaurantUrl
-            }, "newTabToggle.run: replacing button with link");
-
-            const link = document.createElement("a");
-            link.href = myMealsRestaurantUrl;
-            link.target = "_blank";
-            link.rel = "noopener noreferrer";
-            link.textContent = button.textContent;
-            link.className = button.className;
-
-            button.replaceWith(link);
-            replaced++;
-        });
-
-        logger.debug({replaced}, "newTabToggle.run: done");
+    if (!humanOrderId.success) {
+        logger.warn({rawText: rawHumanOrderIdText}, "Could not find human ID for card, skipping");
+        return;
     }
 
-}
+    const id = getIdFromHumanId(humanOrderId.data, cartCacheStorage);
+    if (!id) {
+        logger.warn({humanOrderId: humanOrderId.data}, "Could not find order ID for human ID, skipping");
+        return;
+    }
+
+    const button = selectElementByTestId(CHOOSE_MEAL_BUTTON_TEST_ID, card);
+    if (!button) {
+        logger.warn({humanOrderId: humanOrderId.data}, "Could not find choose button for card, skipping");
+        return;
+    }
+
+    const myMealsRestaurantUrl = getMyMealsRestaurantUrl(id);
+
+    logger.debug({
+        humanOrderId: humanOrderId.data,
+        orderId: id,
+        url: myMealsRestaurantUrl
+    }, "newTabToggle.run: replacing button with link");
+    const link = createLinkElement(myMealsRestaurantUrl, button);
+
+    button.replaceWith(link);
+};
+
+const createLinkElement = (myMealsRestaurantUrl: string, button: HTMLElement) => {
+    const link = document.createElement("a");
+    link.href = myMealsRestaurantUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = button.textContent;
+    link.className = button.className;
+    return link;
+};
 
 export default newTabToggle;
