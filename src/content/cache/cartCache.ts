@@ -1,6 +1,6 @@
 import {createStorageConnection, type StorageConnection} from "../../shared/repositories/storageConnection.ts";
 import {type CartCacheStorage, CartCacheStorageSchema, STORAGE_KEYS} from "../../shared/repositories/storageSchemas.ts";
-import {getSodToday} from "../dateHelpers.ts";
+import {getSod, getSodToday} from "../dateHelpers.ts";
 import {
     getCartInformation,
     type JustEatCartInformationResponse,
@@ -25,18 +25,21 @@ const get = async (): Promise<CartCacheStorage> => {
     const currentValue = await cacheStore.get();
 
     if (!isCacheStale(currentValue)) {
-        logger.debug({cache: currentValue}, "cartCache: cache hit");
+        logger.debug({cache: currentValue}, "cartCache: cache not stale: cache hit");
         return currentValue;
     }
 
     logger.debug({cachedDate: currentValue.date}, "cartCache: cache stale, fetching fresh data");
     const newValue = await updateCache(cacheStore);
-    logger.debug({cache: newValue}, "cartCache: cache hit");
+    logger.debug({cache: newValue}, "cartCache: cache refreshed: cache hit");
     return newValue ?? currentValue; // Todo: update handling of undefined better
 }
 
-const isCacheStale = (cacheState: CartCacheStorage): boolean => cacheState.date.getTime() === getSodToday().getTime();
+const isCacheStale = (cacheState: CartCacheStorage): boolean => {
+    return getSod(cacheState.date).getTime() !== getSodToday().getTime()
+};
 
+// Need a debounce here
 const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CART_CACHE>) => {
     const response: JustEatCartInformationResponse = await getCartInformation();
     if (!response) {
@@ -56,7 +59,7 @@ const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CAR
         items
     }
     await cacheStore.set(newCacheState)
-    logger.debug({items}, "cartCache: cache updated");
+    logger.debug({newCacheState}, "cartCache: cache updated");
 
     return newCacheState;
 }
