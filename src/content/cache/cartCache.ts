@@ -1,11 +1,11 @@
 import {createStorageConnection, type StorageConnection} from "../../shared/repositories/storageConnection.ts";
-import {
-    type CartCacheStorage,
-    type CartCacheStorageItem,
-    STORAGE_KEYS
-} from "../../shared/repositories/storageSchemas.ts";
+import {type CartCacheStorage, STORAGE_KEYS} from "../../shared/repositories/storageSchemas.ts";
 import {getSodToday} from "../dateHelpers.ts";
-import {getCartInformation} from "../clients/justEatClient.ts";
+import {
+    getCartInformation,
+    type JustEatCartInformationResponse,
+    type JustEatCartItem
+} from "../clients/justEatClient.ts";
 import {logger} from "../../shared/logger.ts";
 
 // Todo: Allow nullable default values
@@ -18,17 +18,19 @@ const cartCacheDefault: CartCacheStorage = {
         }
     ]
 }
+
 const get = async () => {
     const cacheStore = createStorageConnection(STORAGE_KEYS.CART_CACHE, cartCacheDefault)
     const currentValue = await cacheStore.get();
 
     if (!isCacheStale(currentValue)) {
-        logger.debug({ date: currentValue.date, itemCount: currentValue.items.length }, "cartCache: cache hit");
+        logger.debug({cache: currentValue}, "cartCache: cache hit");
         return currentValue;
     }
 
-    logger.debug({ cachedDate: currentValue.date }, "cartCache: cache stale, fetching fresh data");
+    logger.debug({cachedDate: currentValue.date}, "cartCache: cache stale, fetching fresh data");
     const newValue = await updateCache(cacheStore);
+    logger.debug({cache: newValue}, "cartCache: cache hit");
     return newValue ?? currentValue; // Todo: update handling of undefined better
 }
 
@@ -36,24 +38,29 @@ const isCacheStale = (cacheState: CartCacheStorage): boolean =>
     cacheState.date.getTime() === getSodToday().getTime();
 
 const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CART_CACHE>) => {
-    const response = await getCartInformation();
-    if (!response) return;
+    const response: JustEatCartInformationResponse = await getCartInformation();
+    if (!response) {
+        logger.warn("cartCache: failed to fetch cart information, cache not updated");
+        return;
+    }
 
-    const items = response.items.map((item): CartCacheStorageItem => ({
-        orderId: item.eaterOptions.orderId,
-        humanOrderId: item.eaterOptions.orderHumanId,
-    }))
+    const items = response.items.flatMap((item: JustEatCartItem) =>
+        item.eaterOptions.map((option) => ({
+            orderId: option.orderId,
+            humanOrderId: option.orderHumanId
+        }))
+    )
 
-    const newCacheState = {
+    const newCacheState: CartCacheStorage = {
         date: getSodToday(),
         items
     }
     await cacheStore.set(newCacheState)
-    logger.debug({ itemCount: items.length }, "cartCache: cache updated");
+    logger.debug({itemCount: items.length}, "cartCache: cache updated");
 
     return newCacheState;
 }
 
 export const cartCache = {
-    get: get,
+    get,
 }

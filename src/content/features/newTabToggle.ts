@@ -12,29 +12,28 @@ import {createStorageConnection} from "../../shared/repositories/storageConnecti
 import {logger} from "../../shared/logger.ts";
 
 const getCardsWithChooseButton = (cards: HTMLElement[]) => cards.filter((card) => {
-    const chooseButton = selectElementByTestId("button", card);
+    const chooseButton = selectElementByTestId("chooseMeal", card);
     return chooseButton !== null;
 });
 
 const getIdFromHumanId = (humanOrderId: number, cartCacheStorage: CartCacheStorage) => {
     const order = cartCacheStorage.items.find((order) => order.humanOrderId === humanOrderId);
     return order?.orderId;
-
 };
 
 export const newTabToggle: Feature = {
     async shouldRun(): Promise<boolean> {
         const store = createStorageConnection(STORAGE_KEYS.NEW_TAB_TOGGLE, newTabToggleDefaultValue)
         const isEnabled = (await store.get()).isEnabled;
-        logger.debug({ isEnabled }, "newTabToggle.shouldRun");
+        logger.debug({isEnabled}, "newTabToggle.shouldRun");
         return isEnabled;
     },
     async run(): Promise<void> {
         const cards = selectElementsByTestId("eaterOption");
-        logger.debug({ count: cards.length }, "newTabToggle.run: found eaterOption cards");
+        logger.debug({cards}, "newTabToggle.run: found eaterOption cards");
 
         const cardsWithChooseButton = getCardsWithChooseButton(cards);
-        logger.debug({ count: cardsWithChooseButton.length }, "newTabToggle.run: cards with choose button");
+        logger.debug({cardsWithChooseButton}, "newTabToggle.run: cards with choose button");
 
         const cartCacheStorage = await cartCache.get();
 
@@ -46,24 +45,28 @@ export const newTabToggle: Feature = {
             const humanOrderId = z.coerce.number().safeParse(rawHumanOrderIdText);
 
             if (!humanOrderId.success) {
-                logger.warn({ rawText: rawHumanOrderIdText }, "Could not find human ID for card, skipping");
+                logger.warn({rawText: rawHumanOrderIdText}, "Could not find human ID for card, skipping");
                 return;
             }
 
             const id = getIdFromHumanId(humanOrderId.data, cartCacheStorage);
             if (!id) {
-                logger.warn({ humanOrderId: humanOrderId.data }, "Could not find order ID for human ID, skipping");
+                logger.warn({humanOrderId: humanOrderId.data}, "Could not find order ID for human ID, skipping");
                 return;
             }
 
             const button = selectElementByTestId("chooseMeal", card);
             if (!button) {
-                logger.warn({ humanOrderId: humanOrderId.data }, "Could not find choose button for card, skipping");
+                logger.warn({humanOrderId: humanOrderId.data}, "Could not find choose button for card, skipping");
                 return;
             }
 
             const myMealsRestaurantUrl = getMyMealsRestaurantUrl(id);
-            logger.debug({ humanOrderId: humanOrderId.data, orderId: id, url: myMealsRestaurantUrl }, "newTabToggle.run: replacing button with link");
+            logger.debug({
+                humanOrderId: humanOrderId.data,
+                orderId: id,
+                url: myMealsRestaurantUrl
+            }, "newTabToggle.run: replacing button with link");
 
             const link = document.createElement("a");
             link.href = myMealsRestaurantUrl;
@@ -76,7 +79,7 @@ export const newTabToggle: Feature = {
             replaced++;
         });
 
-        logger.debug({ replaced }, "newTabToggle.run: done");
+        logger.debug({replaced}, "newTabToggle.run: done");
     }
 
 }
