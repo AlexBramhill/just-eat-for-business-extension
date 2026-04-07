@@ -10,9 +10,11 @@ import {z} from "zod";
 import {getMyMealsRestaurantUrl} from "../justEatPageList.ts";
 import {createStorageConnection} from "../../shared/repositories/storageConnection.ts";
 import {logger} from "../../shared/logger.ts";
+import {CHOOSE_MEAL_BUTTON_TEST_ID, EATER_OPTION_CARD_TEST_ID, ORDER_HUMAN_ID_TEST_ID} from "../elementNames.ts";
+// TODO: rename newtabtoggle to something more descriptive, like "openInNewTab"
 
 const getCardsWithChooseButton = (cards: HTMLElement[]) => cards.filter((card) => {
-    const chooseButton = selectElementByTestId("chooseMeal", card);
+    const chooseButton = selectElementByTestId(CHOOSE_MEAL_BUTTON_TEST_ID, card);
     return chooseButton !== null;
 });
 
@@ -29,8 +31,8 @@ export const newTabToggle: Feature = {
         return isEnabled;
     },
     async run(): Promise<void> {
-        const cards = selectElementsByTestId("eaterOption");
-        logger.debug({cards}, "newTabToggle.run: found eaterOption cards");
+        const cards = selectElementsByTestId(EATER_OPTION_CARD_TEST_ID);
+        logger.debug({cards}, `newTabToggle.run: found ${EATER_OPTION_CARD_TEST_ID} cards`);
 
         const cardsWithChooseButton = getCardsWithChooseButton(cards);
         logger.debug({cardsWithChooseButton}, "newTabToggle.run: cards with choose button");
@@ -39,8 +41,7 @@ export const newTabToggle: Feature = {
 
         let replaced = 0;
         cardsWithChooseButton.forEach((card) => {
-
-            const humanIdElement = selectElementByTestId("orderHumanId", card);
+            const humanIdElement = selectElementByTestId(ORDER_HUMAN_ID_TEST_ID, card);
             const rawHumanOrderIdText = humanIdElement?.textContent?.trim().replace('- Order ', '');
             const humanOrderId = z.coerce.number().safeParse(rawHumanOrderIdText);
 
@@ -55,7 +56,7 @@ export const newTabToggle: Feature = {
                 return;
             }
 
-            const button = selectElementByTestId("chooseMeal", card);
+            const button = selectElementByTestId(CHOOSE_MEAL_BUTTON_TEST_ID, card);
             if (!button) {
                 logger.warn({humanOrderId: humanOrderId.data}, "Could not find choose button for card, skipping");
                 return;
