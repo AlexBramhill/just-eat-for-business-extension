@@ -14,7 +14,7 @@ export const createStorageConnection = <K extends keyof StorageSchemas>(
 ): StorageConnection<K> => {
     const set = async (value: StorageSchemas[K]): Promise<void> => {
         logger.debug({key, value}, "storageConnection: set");
-        await chrome.storage.local.set({[key]: value});
+        await chrome.storage.local.set({[key]: JSON.parse(JSON.stringify(value))});
     };
 
     const get = async (): Promise<StorageSchemas[K]> => {
