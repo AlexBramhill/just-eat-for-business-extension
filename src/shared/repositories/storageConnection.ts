@@ -1,5 +1,6 @@
 import {type StorageSchemas} from "./storageSchemas.ts";
 import {logger} from "../logger.ts";
+import {type ZodType} from "zod";
 
 export type StorageConnection<K extends keyof StorageSchemas> = {
     set: (value: StorageSchemas[K]) => Promise<void>;
@@ -8,10 +9,11 @@ export type StorageConnection<K extends keyof StorageSchemas> = {
 
 export const createStorageConnection = <K extends keyof StorageSchemas>(
     key: K,
+    parser: ZodType<StorageSchemas[K]>,
     defaultValue: StorageSchemas[K]
 ): StorageConnection<K> => {
     const set = async (value: StorageSchemas[K]): Promise<void> => {
-        logger.debug({ key, value }, "storageConnection: set");
+        logger.debug({key, value}, "storageConnection: set");
         await chrome.storage.local.set({[key]: value});
     };
 
@@ -21,12 +23,12 @@ export const createStorageConnection = <K extends keyof StorageSchemas>(
         const storedValue = result[key as string];
 
         if (storedValue !== undefined) {
-            logger.debug({ key, value: storedValue }, "storageConnection: get (stored)");
+            logger.debug({key, value: storedValue}, "storageConnection: get (stored)");
             return storedValue as StorageSchemas[K];
         }
 
-        logger.debug({ key, value: defaultValue }, "storageConnection: get (default)");
-        return defaultValue;
+        logger.debug({key, value: defaultValue}, "storageConnection: get (default)");
+        return parser.parse(defaultValue);
     };
 
     return {

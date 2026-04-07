@@ -1,5 +1,5 @@
 import {createStorageConnection, type StorageConnection} from "../../shared/repositories/storageConnection.ts";
-import {type CartCacheStorage, STORAGE_KEYS} from "../../shared/repositories/storageSchemas.ts";
+import {type CartCacheStorage, CartCacheStorageSchema, STORAGE_KEYS} from "../../shared/repositories/storageSchemas.ts";
 import {getSodToday} from "../dateHelpers.ts";
 import {
     getCartInformation,
@@ -20,7 +20,8 @@ const cartCacheDefault: CartCacheStorage = {
 }
 
 const get = async () => {
-    const cacheStore = createStorageConnection(STORAGE_KEYS.CART_CACHE, cartCacheDefault)
+    // TODO: Extract into store
+    const cacheStore = createStorageConnection(STORAGE_KEYS.CART_CACHE, CartCacheStorageSchema, cartCacheDefault)
     const currentValue = await cacheStore.get();
 
     if (!isCacheStale(currentValue)) {
@@ -34,8 +35,11 @@ const get = async () => {
     return newValue ?? currentValue; // Todo: update handling of undefined better
 }
 
-const isCacheStale = (cacheState: CartCacheStorage): boolean =>
-    cacheState.date.getTime() === getSodToday().getTime();
+const isCacheStale = (cacheState: CartCacheStorage): boolean => {
+    console.debug({time: cacheState.date, isDate: cacheState.date instanceof Date}, "***");
+    console.debug({time: getSodToday()}, "***")
+    return cacheState.date.getTime() === getSodToday().getTime()
+};
 
 const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CART_CACHE>) => {
     const response: JustEatCartInformationResponse = await getCartInformation();

@@ -4,6 +4,7 @@ import {cartCache} from "../cache/cartCache.ts";
 import {
     type CartCacheStorage,
     newTabToggleDefaultValue,
+    NewTabToggleStorageSchema,
     STORAGE_KEYS
 } from "../../shared/repositories/storageSchemas.ts";
 import {z} from "zod";
@@ -25,7 +26,7 @@ const getIdFromHumanId = (humanOrderId: number, cartCacheStorage: CartCacheStora
 
 export const newTabToggle: Feature = {
     async shouldRun(): Promise<boolean> {
-        const store = createStorageConnection(STORAGE_KEYS.NEW_TAB_TOGGLE, newTabToggleDefaultValue)
+        const store = createStorageConnection(STORAGE_KEYS.NEW_TAB_TOGGLE, NewTabToggleStorageSchema, newTabToggleDefaultValue)
         const isEnabled = (await store.get()).isEnabled;
         logger.debug({isEnabled}, "newTabToggle.shouldRun");
         return isEnabled;
