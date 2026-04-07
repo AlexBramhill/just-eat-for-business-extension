@@ -1,15 +1,15 @@
 import {z} from "zod";
 
 export const STORAGE_KEYS = {
-    NEW_TAB_TOGGLE: "newTabToggle",
+    OPEN_IN_NEW_TAB: "openInNewTab",
     CART_CACHE: "cartCache",
 } as const;
 
-export const NewTabToggleStorageSchema = z.object({
+export const OpenInNewTabStorageSchema = z.object({
     isEnabled: z.boolean(),
 });
 
-export const newTabToggleDefaultValue: NewTabToggleStorage = {
+export const openInNewTabDefaultValue: OpenInNewTabStorage = {
     isEnabled: true
 }
 
@@ -24,11 +24,11 @@ export const CartCacheStorageSchema = z.object({
 });
 
 export const StorageSchemasSchema = z.object({
-    [STORAGE_KEYS.NEW_TAB_TOGGLE]: NewTabToggleStorageSchema,
+    [STORAGE_KEYS.OPEN_IN_NEW_TAB]: OpenInNewTabStorageSchema,
     [STORAGE_KEYS.CART_CACHE]: CartCacheStorageSchema,
 });
 
-export type NewTabToggleStorage = z.infer<typeof NewTabToggleStorageSchema>;
+export type OpenInNewTabStorage = z.infer<typeof OpenInNewTabStorageSchema>;
 export type CartCacheStorageItem = z.infer<typeof CartCacheStorageItemSchema>;
 export type CartCacheStorage = z.infer<typeof CartCacheStorageSchema>;
 export type StorageSchemas = z.infer<typeof StorageSchemasSchema>;

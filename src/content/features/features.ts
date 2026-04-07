@@ -1,4 +1,4 @@
-import newTabToggle from "./newTabToggle.ts";
+import openInNewTab from "./openInNewTab.ts";
 
 export type Feature = {
     shouldRun: () => Promise<boolean>;
@@ -6,5 +6,5 @@ export type Feature = {
 }
 
 export const features: Feature[] = [
-    newTabToggle
+    openInNewTab
 ];
