@@ -19,7 +19,7 @@ const cartCacheDefault: CartCacheStorage = {
     ]
 }
 
-const get = async () => {
+const get = async (): Promise<CartCacheStorage> => {
     // TODO: Extract into store
     const cacheStore = createStorageConnection(STORAGE_KEYS.CART_CACHE, CartCacheStorageSchema, cartCacheDefault)
     const currentValue = await cacheStore.get();
@@ -51,12 +51,12 @@ const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CAR
         }))
     )
 
-    const newCacheState: CartCacheStorage = {
+    const newCacheState = {
         date: getSodToday(),
         items
     }
     await cacheStore.set(newCacheState)
-    logger.debug({itemCount: items.length}, "cartCache: cache updated");
+    logger.debug({items}, "cartCache: cache updated");
 
     return newCacheState;
 }
