@@ -9,9 +9,9 @@ const processPage = async () => {
     }
 };
 
-const observer = new MutationObserver(() => {
+const observer = new MutationObserver(async () => {
     logger.debug("DOM mutated, processing page again");
-    processPage();
+    await processPage();
 });
 
 observer.observe(document, {
@@ -19,4 +19,4 @@ observer.observe(document, {
     subtree: true,
 });
 
-processPage();
+processPage()
