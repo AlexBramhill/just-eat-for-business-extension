@@ -81,8 +81,6 @@ const updateCardButtonWithLink = (card: HTMLElement, cartCacheStorage: CartCache
 const createLinkElement = (myMealsRestaurantUrl: string, button: HTMLElement) => {
     const link = document.createElement("a");
     link.href = myMealsRestaurantUrl;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
     link.textContent = button.textContent;
     link.className = button.className;
     return link;
