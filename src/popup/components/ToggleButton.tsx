@@ -25,8 +25,6 @@ export const ToggleButton = (props: ToggleButtonProps) => {
             <Toggle
                 id={props.id || "toggle-button"}
                 isChecked={props.isChecked}
-                onChange={() => {
-                }}
                 class="pointer-events-none"
             />
 
