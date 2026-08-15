@@ -8,15 +8,9 @@ import {
 } from "../clients/justEatClient.ts";
 import {logger} from "../../shared/logger.ts";
 
-// Todo: Allow nullable default values
 const cartCacheDefault: CartCacheStorage = {
     date: new Date(0),
-    items: [
-        {
-            orderId: "0",
-            humanOrderId: 0,
-        }
-    ]
+    items: []
 }
 
 let pendingUpdate: Promise<CartCacheStorage | undefined> | null = null;
