@@ -19,6 +19,8 @@ const cartCacheDefault: CartCacheStorage = {
     ]
 }
 
+let pendingUpdate: Promise<CartCacheStorage | undefined> | null = null;
+
 const get = async (): Promise<CartCacheStorage> => {
     // TODO: Extract into store
     const cacheStore = createStorageConnection(STORAGE_KEYS.CART_CACHE, CartCacheStorageSchema, cartCacheDefault)
@@ -30,7 +32,12 @@ const get = async (): Promise<CartCacheStorage> => {
     }
 
     logger.debug({cachedDate: currentValue.date}, "cartCache: cache stale, fetching fresh data");
-    const newValue = await updateCache(cacheStore);
+    if (!pendingUpdate) {
+        pendingUpdate = updateCache(cacheStore).finally(() => {
+            pendingUpdate = null;
+        });
+    }
+    const newValue = await pendingUpdate;
     logger.debug({cache: newValue}, "cartCache: cache refreshed: cache hit");
     return newValue ?? currentValue; // Todo: update handling of undefined better
 }
@@ -39,7 +46,6 @@ const isCacheStale = (cacheState: CartCacheStorage): boolean => {
     return getSod(cacheState.date).getTime() !== getSodToday().getTime()
 };
 
-// Need a debounce here
 const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CART_CACHE>) => {
     const response: JustEatCartInformationResponse = await getCartInformation();
     if (!response) {
