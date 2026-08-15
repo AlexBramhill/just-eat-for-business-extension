@@ -1,5 +1,4 @@
-import {createStorageConnection, type StorageConnection} from "../../shared/repositories/storageConnection.ts";
-import {type CartCacheStorage, CartCacheStorageSchema, STORAGE_KEYS} from "../../shared/repositories/storageSchemas.ts";
+import {type CartCacheStorage} from "../../shared/repositories/storageSchemas.ts";
 import {getSod, getSodToday} from "../dateHelpers.ts";
 import {
     getCartInformation,
@@ -7,17 +6,11 @@ import {
     type JustEatCartItem
 } from "../clients/justEatClient.ts";
 import {logger} from "../../shared/logger.ts";
-
-const cartCacheDefault: CartCacheStorage = {
-    date: new Date(0),
-    items: []
-}
+import {cacheStore} from "./cartCacheStore.ts";
 
 let pendingUpdate: Promise<CartCacheStorage | undefined> | null = null;
 
 const get = async (): Promise<CartCacheStorage> => {
-    // TODO: Extract into store
-    const cacheStore = createStorageConnection(STORAGE_KEYS.CART_CACHE, CartCacheStorageSchema, cartCacheDefault)
     const currentValue = await cacheStore.get();
 
     if (!isCacheStale(currentValue)) {
@@ -27,7 +20,7 @@ const get = async (): Promise<CartCacheStorage> => {
 
     logger.debug({cachedDate: currentValue.date}, "cartCache: cache stale, fetching fresh data");
     if (!pendingUpdate) {
-        pendingUpdate = updateCache(cacheStore).finally(() => {
+        pendingUpdate = updateCache().finally(() => {
             pendingUpdate = null;
         });
     }
@@ -40,7 +33,7 @@ const isCacheStale = (cacheState: CartCacheStorage): boolean => {
     return getSod(cacheState.date).getTime() !== getSodToday().getTime()
 };
 
-const updateCache = async (cacheStore: StorageConnection<typeof STORAGE_KEYS.CART_CACHE>) => {
+const updateCache = async () => {
     const response: JustEatCartInformationResponse = await getCartInformation();
     if (!response) {
         logger.warn("cartCache: failed to fetch cart information, cache not updated");
