@@ -5,13 +5,15 @@ import {defineConfig} from "eslint/config";
 
 export default defineConfig([
     {
+        ignores: ["dist/**"]
+    },
+    {
         files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
-        ignores: ["dist/**"],
         plugins: {js},
         extends: ["js/recommended"],
         languageOptions: {globals: globals.browser},
         rules: {
-            "no-restricted-imports": ["error"],
+            "no-restricted-imports": ["error", {patterns: ["../*"]}],
         }
     },
     tseslint.configs.recommended,
