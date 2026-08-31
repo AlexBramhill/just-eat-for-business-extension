@@ -6,10 +6,10 @@ import {
     openInNewTabDefaultValue,
     OpenInNewTabStorageSchema,
     STORAGE_KEYS
-} from "@shared/repositories/storageSchemas.ts";
+} from "@lib/sharedStorage/storageSchemas.ts";
 import {z} from "zod";
 import {getMyMealsRestaurantUrl} from "@content/justEatPageList.ts";
-import {createStorageConnection} from "@shared/repositories/storageConnection.ts";
+import {createStorageConnection} from "@lib/sharedStorage/storageConnection.ts";
 import {logger} from "@shared/logger.ts";
 import {CHOOSE_MEAL_BUTTON_TEST_ID, EATER_OPTION_CARD_TEST_ID, ORDER_HUMAN_ID_TEST_ID} from "@content/elementNames.ts";
 

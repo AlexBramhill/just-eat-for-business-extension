@@ -1,4 +1,4 @@
-import {type StorageSchemas} from "@shared/repositories/storageSchemas.ts";
+import {type StorageSchemas} from "@lib/sharedStorage/storageSchemas.ts";
 import {logger} from "@shared/logger.ts";
 import {type ZodType} from "zod";
 

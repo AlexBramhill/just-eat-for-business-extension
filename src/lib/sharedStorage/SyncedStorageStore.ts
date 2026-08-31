@@ -1,5 +1,5 @@
-import type {StorageSchemas} from "@shared/repositories/storageSchemas.ts";
-import type {StorageConnection} from "@shared/repositories/storageConnection.ts";
+import type {StorageSchemas} from "@lib/sharedStorage/storageSchemas.ts";
+import type {StorageConnection} from "@lib/sharedStorage/storageConnection.ts";
 import {onMount} from "solid-js";
 import {createStore} from "solid-js/store";
 import {logger} from "@shared/logger.ts";

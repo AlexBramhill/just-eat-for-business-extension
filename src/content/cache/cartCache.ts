@@ -1,4 +1,4 @@
-import {type CartCacheStorage} from "@shared/repositories/storageSchemas.ts";
+import {type CartCacheStorage} from "@lib/sharedStorage/storageSchemas.ts";
 import {getSod, getSodToday} from "@content/dateHelpers.ts";
 import {
     getCartInformation,
