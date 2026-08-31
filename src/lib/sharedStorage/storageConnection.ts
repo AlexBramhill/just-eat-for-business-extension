@@ -1,22 +1,22 @@
 import {logger} from "@shared/logger.ts";
 import {type ZodType} from "zod";
 
-export type StorageConnection<TStorageSchema, TStorageKey extends keyof TStorageSchema> = {
-    set: (value: TStorageSchema[TStorageKey]) => Promise<void>;
-    get: () => Promise<TStorageSchema[TStorageKey]>;
+export type StorageConnection<T> = {
+    set: (value: T) => Promise<void>;
+    get: () => Promise<T>;
 };
 
-export const createStorageConnection = <TStorageSchema, TStorageKey extends keyof TStorageSchema>(
-    key: TStorageKey,
-    parser: ZodType<TStorageSchema[TStorageKey]>,
-    defaultValue: TStorageSchema[TStorageKey]
-): StorageConnection<TStorageSchema, TStorageKey> => {
-    const set = async (value: TStorageSchema[TStorageKey]): Promise<void> => {
+const createUntypedStorageConnection = <T>(
+    key: string,
+    parser: ZodType<T>,
+    defaultValue: T
+): StorageConnection<T> => {
+    const set = async (value: T): Promise<void> => {
         logger.debug({key, value}, "storageConnection: set");
         await chrome.storage.local.set({[key]: JSON.parse(JSON.stringify(value))});
     };
 
-    const get = async (): Promise<TStorageSchema[TStorageKey]> => {
+    const get = async (): Promise<T> => {
         const result = await chrome.storage.local.get(key as string);
 
         const storedValue = result[key as string];
@@ -34,4 +34,15 @@ export const createStorageConnection = <TStorageSchema, TStorageKey extends keyo
         set,
         get,
     };
+};
+
+export const createStorageConnectionFactory = <TStorageSchema extends Record<string, object>>() => {
+    const createStorageConnection = <K extends keyof TStorageSchema & string>(
+        key: K,
+        parser: ZodType<TStorageSchema[K]>,
+        defaultValue: TStorageSchema[K]
+    ): StorageConnection<TStorageSchema[K]> =>
+        createUntypedStorageConnection(key, parser, defaultValue);
+
+    return {createStorageConnection};
 };

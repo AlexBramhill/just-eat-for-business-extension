@@ -3,8 +3,8 @@ import {CHOOSE_MEAL_BUTTON_TEST_ID, EATER_OPTION_CARD_TEST_ID, ORDER_HUMAN_ID_TE
 import {selectElementByTestId, selectElementsByTestId} from "@content/elementSelectors.ts";
 import type {Feature} from "@content/features/features.ts";
 import {getMyMealsRestaurantUrl} from "@content/justEatPageList.ts";
-import {createStorageConnection} from "@lib/sharedStorage/storageConnection.ts";
 import {logger} from "@shared/logger.ts";
+import {createStorageConnection} from "@shared/storage/storage.ts";
 import {
     type CartCacheStorage,
     openInNewTabDefaultValue,
