@@ -4,11 +4,16 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "chrome-types"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client",
+      "chrome-types"
+    ],
     "skipLibCheck": true,
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
@@ -16,14 +21,32 @@
     "noEmit": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@background/*": [
+        "src/background/*"
+      ],
+      "@content/*": [
+        "src/content/*"
+      ],
+      "@lib/*": [
+        "src/lib/*"
+      ],
+      "popup/*": [
+        "src/popup/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
