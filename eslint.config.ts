@@ -11,7 +11,7 @@ export default defineConfig([
         extends: ["js/recommended"],
         languageOptions: {globals: globals.browser},
         rules: {
-            "no-restricted-imports": ["error", "import1", "import2"],
+            "no-restricted-imports": ["error"],
         }
     },
     tseslint.configs.recommended,
