@@ -1,23 +1,22 @@
-import {type StorageSchemas} from "@lib/sharedStorage/storageSchemas.ts";
 import {logger} from "@shared/logger.ts";
 import {type ZodType} from "zod";
 
-export type StorageConnection<K extends keyof StorageSchemas> = {
-    set: (value: StorageSchemas[K]) => Promise<void>;
-    get: () => Promise<StorageSchemas[K]>;
+export type StorageConnection<TStorageSchema, TStorageKey extends keyof TStorageSchema> = {
+    set: (value: TStorageSchema[TStorageKey]) => Promise<void>;
+    get: () => Promise<TStorageSchema[TStorageKey]>;
 };
 
-export const createStorageConnection = <K extends keyof StorageSchemas>(
-    key: K,
-    parser: ZodType<StorageSchemas[K]>,
-    defaultValue: StorageSchemas[K]
-): StorageConnection<K> => {
-    const set = async (value: StorageSchemas[K]): Promise<void> => {
+export const createStorageConnection = <TStorageSchema, TStorageKey extends keyof TStorageSchema>(
+    key: TStorageKey,
+    parser: ZodType<TStorageSchema[TStorageKey]>,
+    defaultValue: TStorageSchema[TStorageKey]
+): StorageConnection<TStorageSchema, TStorageKey> => {
+    const set = async (value: TStorageSchema[TStorageKey]): Promise<void> => {
         logger.debug({key, value}, "storageConnection: set");
         await chrome.storage.local.set({[key]: JSON.parse(JSON.stringify(value))});
     };
 
-    const get = async (): Promise<StorageSchemas[K]> => {
+    const get = async (): Promise<TStorageSchema[TStorageKey]> => {
         const result = await chrome.storage.local.get(key as string);
 
         const storedValue = result[key as string];

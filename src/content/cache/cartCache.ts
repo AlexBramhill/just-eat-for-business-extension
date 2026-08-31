@@ -5,8 +5,8 @@ import {
     type JustEatCartItem
 } from "@content/clients/justEatClient.ts";
 import {getSod, getSodToday} from "@content/dateHelpers.ts";
-import {type CartCacheStorage} from "@lib/sharedStorage/storageSchemas.ts";
 import {logger} from "@shared/logger.ts";
+import {type CartCacheStorage} from "@shared/storage/storageSchemas.ts";
 
 let pendingUpdate: Promise<CartCacheStorage | undefined> | null = null;
 

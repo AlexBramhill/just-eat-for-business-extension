@@ -4,13 +4,13 @@ import {selectElementByTestId, selectElementsByTestId} from "@content/elementSel
 import type {Feature} from "@content/features/features.ts";
 import {getMyMealsRestaurantUrl} from "@content/justEatPageList.ts";
 import {createStorageConnection} from "@lib/sharedStorage/storageConnection.ts";
+import {logger} from "@shared/logger.ts";
 import {
     type CartCacheStorage,
     openInNewTabDefaultValue,
     OpenInNewTabStorageSchema,
     STORAGE_KEYS
-} from "@lib/sharedStorage/storageSchemas.ts";
-import {logger} from "@shared/logger.ts";
+} from "@shared/storage/storageSchemas.ts";
 import {z} from "zod";
 
 const getCardsWithChooseButton = (cards: HTMLElement[]) => cards.filter((card) => {
