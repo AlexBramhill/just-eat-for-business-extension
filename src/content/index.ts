@@ -1,5 +1,5 @@
-import {logger} from "../shared/logger";
-import {features} from "./features/features.ts";
+import {logger} from "@shared/logger.ts";
+import {features} from "@content/features/features.ts";
 
 const processPage = async () => {
     for (const feature of features) {

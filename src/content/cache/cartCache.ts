@@ -1,12 +1,12 @@
-import {type CartCacheStorage} from "../../shared/repositories/storageSchemas.ts";
-import {getSod, getSodToday} from "../dateHelpers.ts";
+import {type CartCacheStorage} from "@shared/repositories/storageSchemas.ts";
+import {getSod, getSodToday} from "@content/dateHelpers.ts";
 import {
     getCartInformation,
     type JustEatCartInformationResponse,
     type JustEatCartItem
-} from "../clients/justEatClient.ts";
-import {logger} from "../../shared/logger.ts";
-import {cacheStore} from "./cartCacheStore.ts";
+} from "@content/clients/justEatClient.ts";
+import {logger} from "@shared/logger.ts";
+import {cacheStore} from "@content/cache/cartCacheStore.ts";
 
 let pendingUpdate: Promise<CartCacheStorage | undefined> | null = null;
 

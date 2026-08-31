@@ -1,17 +1,17 @@
-import type {Feature} from "./features.ts";
-import {selectElementByTestId, selectElementsByTestId} from "../elementSelectors.ts";
-import {cartCache} from "../cache/cartCache.ts";
+import type {Feature} from "@content/features/features.ts";
+import {selectElementByTestId, selectElementsByTestId} from "@content/elementSelectors.ts";
+import {cartCache} from "@content/cache/cartCache.ts";
 import {
     type CartCacheStorage,
     openInNewTabDefaultValue,
     OpenInNewTabStorageSchema,
     STORAGE_KEYS
-} from "../../shared/repositories/storageSchemas.ts";
+} from "@shared/repositories/storageSchemas.ts";
 import {z} from "zod";
-import {getMyMealsRestaurantUrl} from "../justEatPageList.ts";
-import {createStorageConnection} from "../../shared/repositories/storageConnection.ts";
-import {logger} from "../../shared/logger.ts";
-import {CHOOSE_MEAL_BUTTON_TEST_ID, EATER_OPTION_CARD_TEST_ID, ORDER_HUMAN_ID_TEST_ID} from "../elementNames.ts";
+import {getMyMealsRestaurantUrl} from "@content/justEatPageList.ts";
+import {createStorageConnection} from "@shared/repositories/storageConnection.ts";
+import {logger} from "@shared/logger.ts";
+import {CHOOSE_MEAL_BUTTON_TEST_ID, EATER_OPTION_CARD_TEST_ID, ORDER_HUMAN_ID_TEST_ID} from "@content/elementNames.ts";
 
 const getCardsWithChooseButton = (cards: HTMLElement[]) => cards.filter((card) => {
     const chooseButton = selectElementByTestId(CHOOSE_MEAL_BUTTON_TEST_ID, card);

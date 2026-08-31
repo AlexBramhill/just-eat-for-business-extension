@@ -13,7 +13,7 @@ export default defineConfig([
         extends: ["js/recommended"],
         languageOptions: {globals: globals.browser},
         rules: {
-            "no-restricted-imports": ["error", {patterns: ["../*"]}],
+            "no-restricted-imports": ["error", {patterns: ["../*", "./*"]}],
         }
     },
     tseslint.configs.recommended,

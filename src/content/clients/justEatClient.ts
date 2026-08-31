@@ -1,7 +1,7 @@
-import {JUST_EAT_CART_API_URL} from "../justEatPageList.ts";
-import {getSodToday} from "../dateHelpers.ts";
+import {JUST_EAT_CART_API_URL} from "@content/justEatPageList.ts";
+import {getSodToday} from "@content/dateHelpers.ts";
 import {z} from "zod";
-import {logger} from "../../shared/logger.ts";
+import {logger} from "@shared/logger.ts";
 
 const JustEatEaterOptionSchema = z.object({
     orderHumanId: z.number(),

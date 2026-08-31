@@ -1,4 +1,4 @@
-import openInNewTab from "./openInNewTab.ts";
+import openInNewTab from "@content/features/openInNewTab.ts";
 
 export type Feature = {
     shouldRun: () => Promise<boolean>;

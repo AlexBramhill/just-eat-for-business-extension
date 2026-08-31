@@ -1,5 +1,5 @@
-import {type StorageSchemas} from "./storageSchemas.ts";
-import {logger} from "../logger.ts";
+import {type StorageSchemas} from "@shared/repositories/storageSchemas.ts";
+import {logger} from "@shared/logger.ts";
 import {type ZodType} from "zod";
 
 export type StorageConnection<K extends keyof StorageSchemas> = {
