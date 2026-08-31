@@ -1,5 +1,5 @@
-import pino from "pino";
 import {isDebug} from "@shared/debugger.ts";
+import pino from "pino";
 
 const level = isDebug() ? "debug" : "info";
 

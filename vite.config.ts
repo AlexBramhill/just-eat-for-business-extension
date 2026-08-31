@@ -1,7 +1,7 @@
-import {defineConfig} from "vite";
-import {resolve} from "path";
-import solidPlugin from "vite-plugin-solid";
 import tailwindcss from "@tailwindcss/vite";
+import {resolve} from "path";
+import {defineConfig} from "vite";
+import solidPlugin from "vite-plugin-solid";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({mode}) => ({

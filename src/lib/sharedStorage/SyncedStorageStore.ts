@@ -1,8 +1,8 @@
-import type {StorageSchemas} from "@lib/sharedStorage/storageSchemas.ts";
 import type {StorageConnection} from "@lib/sharedStorage/storageConnection.ts";
+import type {StorageSchemas} from "@lib/sharedStorage/storageSchemas.ts";
+import {logger} from "@shared/logger.ts";
 import {onMount} from "solid-js";
 import {createStore} from "solid-js/store";
-import {logger} from "@shared/logger.ts";
 
 export type SyncedStorageStore<K extends keyof StorageSchemas> = {
     value: StorageSchemas[K];
