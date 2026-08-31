@@ -9,7 +9,8 @@
     "dev:content": "vite build --config vite.config.content.ts --watch --mode development",
     "build": "tsc -b && vite build && vite build --config vite.config.content.ts",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@solidjs/router": "^0.15.4",
