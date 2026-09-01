@@ -5,7 +5,7 @@ import {createStore} from "solid-js/store";
 
 export type OptimisticUpdateStorageStore<K extends object> = {
     value: K | undefined;
-    updateValue: (newValue: K) => void;
+    updateValue: (newValue: K) => Promise<void>;
 };
 
 export function createOptimisticUpdateStorageStore<K extends object>(
@@ -14,12 +14,12 @@ export function createOptimisticUpdateStorageStore<K extends object>(
 
 export function createOptimisticUpdateStorageStore<K extends object>(
     getValue: () => Promise<K>,
-    setPersistedValue: (newValue: K) => void,
+    setPersistedValue: (newValue: K) => Promise<void>,
 ): OptimisticUpdateStorageStore<K>;
 
 export function createOptimisticUpdateStorageStore<K extends object>(
     storageConnectionOrGetValue: StorageConnection<K> | (() => Promise<K>),
-    setPersistedValue?: (newValue: K) => void,
+    setPersistedValue?: (newValue: K) => Promise<void>,
 ): OptimisticUpdateStorageStore<K> {
     const getValue =
         typeof storageConnectionOrGetValue === "function"
