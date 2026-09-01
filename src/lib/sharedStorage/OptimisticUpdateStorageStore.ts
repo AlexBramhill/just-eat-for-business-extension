@@ -9,28 +9,8 @@ export type OptimisticUpdateStorageStore<K extends object> = {
 };
 
 export function createOptimisticUpdateStorageStore<K extends object>(
-    storageConnection: StorageConnection<K>
-): OptimisticUpdateStorageStore<K>;
-
-export function createOptimisticUpdateStorageStore<K extends object>(
-    getValue: () => Promise<K>,
-    setPersistedValue: (newValue: K) => Promise<void>,
-): OptimisticUpdateStorageStore<K>;
-
-export function createOptimisticUpdateStorageStore<K extends object>(
-    storageConnectionOrGetValue: StorageConnection<K> | (() => Promise<K>),
-    setPersistedValue?: (newValue: K) => Promise<void>,
+    {set: setValue, get: getValue}: StorageConnection<K>
 ): OptimisticUpdateStorageStore<K> {
-    const getValue =
-        typeof storageConnectionOrGetValue === "function"
-            ? storageConnectionOrGetValue
-            : storageConnectionOrGetValue.get;
-
-    const setValue =
-        typeof storageConnectionOrGetValue === "function"
-            ? setPersistedValue!
-            : storageConnectionOrGetValue.set;
-
     const [value, setValueStore] = createStore<{ data?: K }>({});
 
     onMount(async () => {
@@ -41,8 +21,17 @@ export function createOptimisticUpdateStorageStore<K extends object>(
 
     const updateValue = async (newValue: K) => {
         logger.debug({newValue}, "SyncedStorageStore: updateValue");
+        const previousValue = value.data;
+
         setValueStore({data: newValue});
-        setValue(newValue);
+
+        try {
+            await setValue(newValue);
+        } catch (error) {
+            setValueStore({data: previousValue});
+            logger.error({error, newValue}, "Failed to persist value");
+            throw error;
+        }
     };
 
     return {
