@@ -1,4 +1,4 @@
-import { createOptimisticStore } from '@lib/optimisticStore/OptimisticStore.ts';
+import { createOptimisticStore } from '@lib/optimisticStore/optimisticStore.ts';
 import { logger } from '@shared/logger.ts';
 import { createStorageConnection } from '@shared/storage/storage.ts';
 import {

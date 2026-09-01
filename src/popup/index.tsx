@@ -1,6 +1,6 @@
 import { HashRouter, Route } from '@solidjs/router';
 import { render } from 'solid-js/web';
-import Home from './home.tsx';
+import Home from './Home.tsx';
 
 render(
   () => (
