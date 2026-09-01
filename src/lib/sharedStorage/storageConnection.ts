@@ -1,5 +1,5 @@
+import { type Logger, noopLogger } from '@lib/logger/logger.ts';
 import type { StorageDefinition } from '@lib/sharedStorage/storageDefinition.ts';
-import { logger } from '@shared/logger.ts';
 
 export type StorageConnection<T> = {
   set: (value: T) => Promise<void>;
@@ -27,6 +27,7 @@ export const createStorageConnectionFactory = <
   Defs extends AnyStorageDefinitions,
 >(
   storageDefinitions: Defs,
+  logger: Logger = noopLogger,
 ) => {
   return <K extends Defs[number]['key']>(
     key: K,
@@ -43,6 +44,7 @@ export const createStorageConnectionFactory = <
     return createUntypedStorageConnection<ValueForKey<Defs, K>>(
       storageDefinition,
       defaultValue,
+      logger,
     );
   };
 };
@@ -50,6 +52,7 @@ export const createStorageConnectionFactory = <
 const createUntypedStorageConnection = <T extends object>(
   storageDefinition: StorageDefinition<string, T>,
   defaultValue: T,
+  logger: Logger,
 ): StorageConnection<T> => {
   const { key, schema } = storageDefinition;
   const set = async (value: T): Promise<void> => {

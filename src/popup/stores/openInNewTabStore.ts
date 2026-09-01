@@ -1,4 +1,5 @@
 import { createOptimisticUpdateStorageStore } from '@lib/sharedStorage/OptimisticUpdateStorageStore.ts';
+import { logger } from '@shared/logger.ts';
 import { createStorageConnection } from '@shared/storage/storage.ts';
 import {
   openInNewTabDefaultValue,
@@ -12,4 +13,5 @@ const openInNewTabStorageConnection = createStorageConnection(
 
 export const openInNewTabStore = createOptimisticUpdateStorageStore(
   openInNewTabStorageConnection,
+  logger,
 );

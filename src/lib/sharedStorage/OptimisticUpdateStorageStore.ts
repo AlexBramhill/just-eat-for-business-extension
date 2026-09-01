@@ -1,5 +1,5 @@
+import { type Logger, noopLogger } from '@lib/logger/logger.ts';
 import type { StorageConnection } from '@lib/sharedStorage/storageConnection.ts';
-import { logger } from '@shared/logger.ts';
 import { createStore } from 'solid-js/store';
 
 export type OptimisticUpdateStorageStore<K extends object> = {
@@ -7,10 +7,10 @@ export type OptimisticUpdateStorageStore<K extends object> = {
   updateValue: (newValue: K) => Promise<void>;
 };
 
-export function createOptimisticUpdateStorageStore<K extends object>({
-  set: setValue,
-  get: getValue,
-}: StorageConnection<K>): OptimisticUpdateStorageStore<K> {
+export function createOptimisticUpdateStorageStore<K extends object>(
+  { set: setValue, get: getValue }: StorageConnection<K>,
+  logger: Logger = noopLogger,
+): OptimisticUpdateStorageStore<K> {
   const [value, setValueStore] = createStore<{ data?: K }>({});
 
   (async () => {

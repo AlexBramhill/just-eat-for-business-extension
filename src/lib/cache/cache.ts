@@ -1,5 +1,5 @@
-import {logger} from '@shared/logger.ts';
-import {z} from 'zod';
+import { type Logger, noopLogger } from '@lib/logger/logger.ts';
+import { z } from 'zod';
 
 export const createCachedSchema = <T extends z.ZodType>(valueSchema: T) =>
   z.object({
@@ -17,16 +17,18 @@ export const createCache = <T>({
   setStore,
   isStale,
   getUpdatedValue,
+  logger = noopLogger,
 }: {
   getStore: () => Promise<Cached<T>>;
   setStore: (value: Cached<T>) => Promise<void>;
   getUpdatedValue: () => Promise<T>;
   isStale: (value: Cached<T>) => boolean;
+  logger?: Logger;
 }): { get: () => Promise<Cached<T>> } => {
   let pendingUpdate: Promise<Cached<T>> | null = null;
 
   const get = async () => {
-    const updateCache = getUpdateCache({ setStore, getUpdatedValue });
+    const updateCache = getUpdateCache({ setStore, getUpdatedValue, logger });
     const currentValue = await getStore();
 
     if (!isStale(currentValue)) {
@@ -59,9 +61,11 @@ export const createCache = <T>({
 const getUpdateCache = <T>({
   setStore,
   getUpdatedValue,
+  logger,
 }: {
   setStore: (value: Cached<T>) => Promise<void>;
   getUpdatedValue: () => Promise<T>;
+  logger: Logger;
 }) => {
   return async () => {
     const newCacheValue = await getUpdatedValue();
@@ -72,7 +76,7 @@ const getUpdateCache = <T>({
     };
     await setStore(newCacheState);
 
-    logger.debug({newCacheState}, 'cartCache: cache updated');
+    logger.debug({ newCacheState }, 'cartCache: cache updated');
 
     return newCacheState;
   };

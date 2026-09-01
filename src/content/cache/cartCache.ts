@@ -6,6 +6,7 @@ import {
 } from '@content/clients/justEatClient.ts';
 import { getSod, getSodToday } from '@content/dateHelpers.ts';
 import { createCache } from '@lib/cache/cache.ts';
+import { logger } from '@shared/logger.ts';
 import { type CartCacheStorageItem } from '@shared/storage/storageDefinitions.ts';
 
 export const cartCache = createCache<CartCacheStorageItem[]>({
@@ -13,6 +14,7 @@ export const cartCache = createCache<CartCacheStorageItem[]>({
   setStore: cacheStore.set,
   isStale: (cachedValue) =>
     getSod(cachedValue.date).getTime() !== getSodToday().getTime(),
+  logger,
   getUpdatedValue: async () => {
     const response: JustEatCartInformationResponse = await getCartInformation();
 
