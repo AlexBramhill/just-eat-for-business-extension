@@ -32,7 +32,7 @@ const getIdFromHumanId = (
   humanOrderId: number,
   cartCacheStorage: CartCacheStorage,
 ) => {
-  const order = cartCacheStorage.items.find(
+  const order = cartCacheStorage.value.find(
     (order) => order.humanOrderId === humanOrderId,
   );
   return order?.orderId;

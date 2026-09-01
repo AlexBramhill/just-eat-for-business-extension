@@ -1,11 +1,18 @@
 import { logger } from '@shared/logger.ts';
+import { z } from 'zod';
+
+export const createCachedSchema = <T extends z.ZodType>(valueSchema: T) =>
+  z.object({
+    date: z.coerce.date(),
+    value: valueSchema,
+  });
 
 export type Cached<T> = {
   date: Date;
   value: T;
 };
 
-export const createCache = async <T>({
+export const createCache = <T>({
   getStore,
   setStore,
   isStale,
@@ -15,7 +22,7 @@ export const createCache = async <T>({
   setStore: (value: Cached<T>) => Promise<void>;
   getUpdatedValue: () => Promise<T>;
   isStale: (value: Cached<T>) => boolean;
-}): Promise<{ get: () => Promise<Cached<T>> }> => {
+}): { get: () => Promise<Cached<T>> } => {
   let pendingUpdate: Promise<Cached<T>> | null = null;
 
   const get = async () => {

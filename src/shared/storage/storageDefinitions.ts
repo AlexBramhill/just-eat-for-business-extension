@@ -1,3 +1,4 @@
+import { createCachedSchema } from '@lib/cache/cache.ts';
 import { createStorageDefinitions } from '@lib/sharedStorage/storageDefinition.ts';
 import { z } from 'zod';
 
@@ -14,18 +15,17 @@ export const openInNewTabDefaultValue: OpenInNewTabStorage = {
   isEnabled: true,
 };
 
-export const CartCacheStorageItemSchema = z.object({
+export const CartStorageItemSchema = z.object({
   orderId: z.string(),
   humanOrderId: z.number(),
 });
 
-export const CartCacheStorageSchema = z.object({
-  date: z.coerce.date(),
-  items: z.array(CartCacheStorageItemSchema),
-});
+export const CartCacheStorageSchema = createCachedSchema(
+  z.array(CartStorageItemSchema),
+);
 
 export type OpenInNewTabStorage = z.infer<typeof OpenInNewTabStorageSchema>;
-export type CartCacheStorageItem = z.infer<typeof CartCacheStorageItemSchema>;
+export type CartCacheStorageItem = z.infer<typeof CartStorageItemSchema>;
 export type CartCacheStorage = z.infer<typeof CartCacheStorageSchema>;
 
 export const storageDefinitions = createStorageDefinitions([

@@ -5,60 +5,22 @@ import {
   type JustEatCartItem,
 } from '@content/clients/justEatClient.ts';
 import { getSod, getSodToday } from '@content/dateHelpers.ts';
-import { logger } from '@shared/logger.ts';
-import { type CartCacheStorage } from '@shared/storage/storageDefinitions.ts';
+import { createCache } from '@lib/cache/cache.ts';
+import { type CartCacheStorageItem } from '@shared/storage/storageDefinitions.ts';
 
-let pendingUpdate: Promise<CartCacheStorage | undefined> | null = null;
+export const cartCache = createCache<CartCacheStorageItem[]>({
+  getStore: cacheStore.get,
+  setStore: cacheStore.set,
+  isStale: (cachedValue) =>
+    getSod(cachedValue.date).getTime() !== getSodToday().getTime(),
+  getUpdatedValue: async () => {
+    const response: JustEatCartInformationResponse = await getCartInformation();
 
-const get = async (): Promise<CartCacheStorage> => {
-  const currentValue = await cacheStore.get();
-
-  if (!isCacheStale(currentValue)) {
-    logger.debug(
-      { cache: currentValue },
-      'cartCache: cache not stale: cache hit',
+    return response.items.flatMap((item: JustEatCartItem) =>
+      item.eaterOptions.map((option) => ({
+        orderId: option.orderId,
+        humanOrderId: option.orderHumanId,
+      })),
     );
-    return currentValue;
-  }
-
-  logger.debug(
-    { cachedDate: currentValue.date },
-    'cartCache: cache stale, fetching fresh data',
-  );
-  if (!pendingUpdate) {
-    pendingUpdate = updateCache().finally(() => {
-      pendingUpdate = null;
-    });
-  }
-  const newValue = await pendingUpdate;
-  logger.debug({ cache: newValue }, 'cartCache: cache refreshed: cache hit');
-  return newValue ?? currentValue; // Todo: update handling of undefined better
-};
-
-const isCacheStale = (cacheState: CartCacheStorage): boolean => {
-  return getSod(cacheState.date).getTime() !== getSodToday().getTime();
-};
-
-const updateCache = async () => {
-  const response: JustEatCartInformationResponse = await getCartInformation();
-
-  const items = response.items.flatMap((item: JustEatCartItem) =>
-    item.eaterOptions.map((option) => ({
-      orderId: option.orderId,
-      humanOrderId: option.orderHumanId,
-    })),
-  );
-
-  const newCacheState = {
-    date: getSodToday(),
-    items,
-  };
-  await cacheStore.set(newCacheState);
-  logger.debug({ newCacheState }, 'cartCache: cache updated');
-
-  return newCacheState;
-};
-
-export const cartCache = {
-  get,
-};
+  },
+});

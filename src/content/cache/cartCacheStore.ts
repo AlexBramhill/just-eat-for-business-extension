@@ -6,7 +6,7 @@ import {
 
 const cartCacheDefault: CartCacheStorage = {
   date: new Date(0),
-  items: [],
+  value: [],
 };
 
 export const cacheStore = createStorageConnection(
