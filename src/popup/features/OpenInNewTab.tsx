@@ -1,5 +1,5 @@
-import ToggleButton from '../components/ToggleButton.tsx';
-import { openInNewTabStore } from '../stores/openInNewTabStore.ts';
+import ToggleButton from '@popup//components/ToggleButton.tsx';
+import { openInNewTabStore } from '@popup/stores/openInNewTabStore.ts';
 
 export const OpenInNewTab = () => {
   const { value, updateValue } = openInNewTabStore;

@@ -1,6 +1,6 @@
-import { Button } from './Button';
-import { Toggle } from './Toggle';
-import type { Affix } from './Affixes';
+import type { Affix } from '@popup/components/Affixes.tsx';
+import { Button } from '@popup/components/Button.tsx';
+import { Toggle } from '@popup/components/Toggle.tsx';
 
 interface ToggleButtonProps {
   id?: string;

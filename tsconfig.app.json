@@ -25,7 +25,7 @@
       "@background/*": ["src/background/*"],
       "@content/*": ["src/content/*"],
       "@lib/*": ["src/lib/*"],
-      "popup/*": ["src/popup/*"],
+      "@popup/*": ["src/popup/*"],
       "@shared/*": ["src/shared/*"]
     }
   },

@@ -10,7 +10,7 @@ export default defineConfig([
     ignores: ['dist/**'],
   },
   {
-    files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
+    files: ['**/*.{js,mjs,cjs,ts,mts,cts,tsx}'],
     plugins: { js, 'simple-import-sort': simpleImportSort },
     extends: ['js/recommended'],
     languageOptions: { globals: globals.browser },

@@ -1,5 +1,5 @@
-import OpenInNewTab from './features/OpenInNewTab.tsx';
-import MainContainer from './components/MainContainer.tsx';
+import MainContainer from '@popup/components/MainContainer.tsx';
+import OpenInNewTab from '@popup/features/OpenInNewTab.tsx';
 
 export const Home = () => {
   return (
