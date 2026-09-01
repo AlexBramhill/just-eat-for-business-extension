@@ -1,16 +1,20 @@
 import { type Logger, noopLogger } from '@lib/logger/logger.ts';
-import type { StorageConnection } from '@lib/sharedStorage/storageConnection.ts';
 import { createStore } from 'solid-js/store';
 
-export type OptimisticUpdateStorageStore<K extends object> = {
+export type OptimisticStore<K extends object> = {
   value: K | undefined;
   updateValue: (newValue: K) => Promise<void>;
 };
 
-export function createOptimisticUpdateStorageStore<K extends object>(
-  { set: setValue, get: getValue }: StorageConnection<K>,
+export type PersistentStorageConnection<T> = {
+  get: () => Promise<T>;
+  set: (value: T) => Promise<void>;
+};
+
+export function createOptimisticStore<K extends object>(
+  { set: setValue, get: getValue }: PersistentStorageConnection<K>,
   logger: Logger = noopLogger,
-): OptimisticUpdateStorageStore<K> {
+): OptimisticStore<K> {
   const [value, setValueStore] = createStore<{ data?: K }>({});
 
   (async () => {
@@ -18,12 +22,12 @@ export function createOptimisticUpdateStorageStore<K extends object>(
     setValueStore({ data: savedValue });
     logger.debug(
       { value: savedValue },
-      'SyncedStorageStore: loaded initial value',
+      'OptimisticStore: loaded initial value',
     );
   })();
 
   const updateValue = async (newValue: K) => {
-    logger.debug({ newValue }, 'SyncedStorageStore: updateValue');
+    logger.debug({ newValue }, 'OptimisticStore: updateValue');
     const previousValue = value.data;
 
     setValueStore({ data: newValue });
