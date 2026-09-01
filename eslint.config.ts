@@ -15,7 +15,7 @@ export default defineConfig([
     extends: ['js/recommended'],
     languageOptions: { globals: globals.browser },
     rules: {
-      'no-restricted-imports': ['error', { patterns: ['../*', './*'] }],
+      'no-restricted-imports': ['error', { patterns: ['../**', './**'] }],
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
     },
