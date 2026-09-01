@@ -1,3 +1,4 @@
+import type {StorageConnection} from "@lib/sharedStorage/storageConnection.ts";
 import {logger} from "@shared/logger.ts";
 import {onMount} from "solid-js";
 import {createStore} from "solid-js/store";
@@ -7,22 +8,41 @@ export type OptimisticUpdateStorageStore<K extends object> = {
     updateValue: (newValue: K) => void;
 };
 
-export const createOptimisticUpdateStorageStore = <K extends object>(
+export function createOptimisticUpdateStorageStore<K extends object>(
+    storageConnection: StorageConnection<K>
+): OptimisticUpdateStorageStore<K>;
+
+export function createOptimisticUpdateStorageStore<K extends object>(
     getValue: () => Promise<K>,
     setPersistedValue: (newValue: K) => void,
-): OptimisticUpdateStorageStore<K> => {
-    const [value, setValue] = createStore<{ data?: K }>({});
+): OptimisticUpdateStorageStore<K>;
+
+export function createOptimisticUpdateStorageStore<K extends object>(
+    storageConnectionOrGetValue: StorageConnection<K> | (() => Promise<K>),
+    setPersistedValue?: (newValue: K) => void,
+): OptimisticUpdateStorageStore<K> {
+    const getValue =
+        typeof storageConnectionOrGetValue === "function"
+            ? storageConnectionOrGetValue
+            : storageConnectionOrGetValue.get;
+
+    const setValue =
+        typeof storageConnectionOrGetValue === "function"
+            ? setPersistedValue!
+            : storageConnectionOrGetValue.set;
+
+    const [value, setValueStore] = createStore<{ data?: K }>({});
 
     onMount(async () => {
         const savedValue = await getValue();
-        setValue({data: savedValue});
+        setValueStore({data: savedValue});
         logger.debug({value: savedValue}, "SyncedStorageStore: loaded initial value");
     });
 
     const updateValue = async (newValue: K) => {
         logger.debug({newValue}, "SyncedStorageStore: updateValue");
-        setValue({data: newValue});
-        setPersistedValue(newValue);
+        setValueStore({data: newValue});
+        setValue(newValue);
     };
 
     return {
@@ -30,5 +50,5 @@ export const createOptimisticUpdateStorageStore = <K extends object>(
             return value.data;
         },
         updateValue,
-    }
+    };
 }

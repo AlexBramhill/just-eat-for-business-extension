@@ -1,3 +1,4 @@
+import {createStorageDefinitions} from "@lib/sharedStorage/storageDefinition.ts";
 import {z} from "zod";
 
 export const STORAGE_KEYS = {
@@ -23,12 +24,12 @@ export const CartCacheStorageSchema = z.object({
     items: z.array(CartCacheStorageItemSchema),
 });
 
-export const StorageSchemasSchema = z.object({
-    [STORAGE_KEYS.OPEN_IN_NEW_TAB]: OpenInNewTabStorageSchema,
-    [STORAGE_KEYS.CART_CACHE]: CartCacheStorageSchema,
-});
-
 export type OpenInNewTabStorage = z.infer<typeof OpenInNewTabStorageSchema>;
 export type CartCacheStorageItem = z.infer<typeof CartCacheStorageItemSchema>;
 export type CartCacheStorage = z.infer<typeof CartCacheStorageSchema>;
-export type StorageSchemas = z.infer<typeof StorageSchemasSchema>;
+
+
+export const storageDefinitions = createStorageDefinitions(
+    [{key: STORAGE_KEYS.OPEN_IN_NEW_TAB, schema: OpenInNewTabStorageSchema},
+        {key: STORAGE_KEYS.CART_CACHE, schema: CartCacheStorageSchema}]
+);

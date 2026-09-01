@@ -5,12 +5,7 @@ import type {Feature} from "@content/features/features.ts";
 import {getMyMealsRestaurantUrl} from "@content/justEatPageList.ts";
 import {logger} from "@shared/logger.ts";
 import {createStorageConnection} from "@shared/storage/storage.ts";
-import {
-    type CartCacheStorage,
-    openInNewTabDefaultValue,
-    OpenInNewTabStorageSchema,
-    STORAGE_KEYS
-} from "@shared/storage/storageSchemas.ts";
+import {type CartCacheStorage, openInNewTabDefaultValue, STORAGE_KEYS} from "@shared/storage/storageDefinitions.ts";
 import {z} from "zod";
 
 const getCardsWithChooseButton = (cards: HTMLElement[]) => cards.filter((card) => {
@@ -25,7 +20,7 @@ const getIdFromHumanId = (humanOrderId: number, cartCacheStorage: CartCacheStora
 
 export const openInNewTab: Feature = {
     async shouldRun(): Promise<boolean> {
-        const store = createStorageConnection(STORAGE_KEYS.OPEN_IN_NEW_TAB, OpenInNewTabStorageSchema, openInNewTabDefaultValue)
+        const store = createStorageConnection(STORAGE_KEYS.OPEN_IN_NEW_TAB, openInNewTabDefaultValue)
         const isEnabled = (await store.get()).isEnabled;
         logger.debug({isEnabled}, "openInNewTab.shouldRun");
         return isEnabled;

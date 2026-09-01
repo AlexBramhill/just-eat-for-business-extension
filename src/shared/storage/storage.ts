@@ -1,4 +1,4 @@
 import {createStorageConnectionFactory} from "@lib/sharedStorage/storageConnection.ts";
-import {type StorageSchemas} from "@shared/storage/storageSchemas.ts";
+import {storageDefinitions} from "@shared/storage/storageDefinitions.ts";
 
-export const {createStorageConnection} = createStorageConnectionFactory<StorageSchemas>();
+export const createStorageConnection = createStorageConnectionFactory(storageDefinitions);
