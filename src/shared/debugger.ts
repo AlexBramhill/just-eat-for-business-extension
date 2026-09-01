@@ -1,3 +1,3 @@
-import {isDevelopment} from "@shared/environment.ts";
+import { isDevelopment } from '@shared/environment.ts';
 
 export const isDebug = () => isDevelopment;

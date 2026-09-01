@@ -13,15 +13,9 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://app.business.just-eat.co.uk/*"
-      ],
-      "js": [
-        "content/index.js"
-      ]
+      "matches": ["https://app.business.just-eat.co.uk/*"],
+      "js": ["content/index.js"]
     }
   ],
-  "permissions": [
-    "storage"
-  ]
+  "permissions": ["storage"]
 }

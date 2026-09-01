@@ -1,6 +1,6 @@
 export const Environment = {
-    Development: "development",
-    Production: "production",
+  Development: 'development',
+  Production: 'production',
 } as const;
 
 export const isDevelopment = import.meta.env.MODE === Environment.Development;

@@ -1,17 +1,20 @@
-import ToggleButton from "../components/ToggleButton.tsx";
-import {openInNewTabStore} from "../stores/openInNewTabStore.ts";
+import ToggleButton from '../components/ToggleButton.tsx';
+import { openInNewTabStore } from '../stores/openInNewTabStore.ts';
 
 export const OpenInNewTab = () => {
-    const {value, updateValue} = openInNewTabStore
+  const { value, updateValue } = openInNewTabStore;
 
-    if (!value) {
-        return <></>
-    }
+  if (!value) {
+    return <></>;
+  }
 
-    return (
-        <ToggleButton prefix={"Enable new tab on choose order button"} isChecked={value.isEnabled}
-                      onClick={() => updateValue({isEnabled: !value.isEnabled})}/>
-    );
-}
+  return (
+    <ToggleButton
+      prefix={'Enable new tab on choose order button'}
+      isChecked={value.isEnabled}
+      onClick={() => updateValue({ isEnabled: !value.isEnabled })}
+    />
+  );
+};
 
 export default OpenInNewTab;

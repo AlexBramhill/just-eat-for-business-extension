@@ -37,7 +37,7 @@ A Chrome extension that adds buttons to Just Eat for Business
    note: extension still requires being reloaded in Chrome based on Chrome's requirements)
 
 1. **Load the extension in Chrome:**
-    - Navigate to `chrome://extensions`.
-    - Enable **Developer mode** using the toggle in the top-right corner.
-    - Click the **Load unpacked** button.
-    - Select the `dist` directory from this project.
+   - Navigate to `chrome://extensions`.
+   - Enable **Developer mode** using the toggle in the top-right corner.
+   - Click the **Load unpacked** button.
+   - Select the `dist` directory from this project.
