@@ -1,6 +1,5 @@
 import type { StorageConnection } from '@lib/sharedStorage/storageConnection.ts';
 import { logger } from '@shared/logger.ts';
-import { onMount } from 'solid-js';
 import { createStore } from 'solid-js/store';
 
 export type OptimisticUpdateStorageStore<K extends object> = {
@@ -14,14 +13,14 @@ export function createOptimisticUpdateStorageStore<K extends object>({
 }: StorageConnection<K>): OptimisticUpdateStorageStore<K> {
   const [value, setValueStore] = createStore<{ data?: K }>({});
 
-  onMount(async () => {
+  (async () => {
     const savedValue = await getValue();
     setValueStore({ data: savedValue });
     logger.debug(
       { value: savedValue },
       'SyncedStorageStore: loaded initial value',
     );
-  });
+  })();
 
   const updateValue = async (newValue: K) => {
     logger.debug({ newValue }, 'SyncedStorageStore: updateValue');
