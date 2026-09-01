@@ -1,5 +1,5 @@
-import { logger } from '@shared/logger.ts';
-import { z } from 'zod';
+import {logger} from '@shared/logger.ts';
+import {z} from 'zod';
 
 export const createCachedSchema = <T extends z.ZodType>(valueSchema: T) =>
   z.object({
@@ -63,7 +63,7 @@ const getUpdateCache = <T>({
   setStore: (value: Cached<T>) => Promise<void>;
   getUpdatedValue: () => Promise<T>;
 }) => {
-  const updateCache = async () => {
+  return async () => {
     const newCacheValue = await getUpdatedValue();
 
     const newCacheState = {
@@ -72,10 +72,8 @@ const getUpdateCache = <T>({
     };
     await setStore(newCacheState);
 
-    logger.debug({ newCacheState }, 'cartCache: cache updated');
+    logger.debug({newCacheState}, 'cartCache: cache updated');
 
     return newCacheState;
   };
-
-  return updateCache;
 };
