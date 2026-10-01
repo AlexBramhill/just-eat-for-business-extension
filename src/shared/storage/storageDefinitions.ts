@@ -29,6 +29,14 @@ export type CartCacheStorageItem = z.infer<typeof CartStorageItemSchema>;
 export type CartCacheStorage = z.infer<typeof CartCacheStorageSchema>;
 
 export const storageDefinitions = createStorageDefinitions([
-  { key: STORAGE_KEYS.OPEN_IN_NEW_TAB, schema: OpenInNewTabStorageSchema },
-  { key: STORAGE_KEYS.CART_CACHE, schema: CartCacheStorageSchema },
+  {
+    key: STORAGE_KEYS.OPEN_IN_NEW_TAB,
+    schema: OpenInNewTabStorageSchema,
+    area: 'local',
+  },
+  {
+    key: STORAGE_KEYS.CART_CACHE,
+    schema: CartCacheStorageSchema,
+    area: 'local',
+  },
 ]);

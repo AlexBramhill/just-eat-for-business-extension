@@ -1,7 +1,8 @@
 import { type Logger, noopLogger } from '@lib/logger/logger.ts';
-import type { StorageDefinition } from '@lib/sharedStorage/storageDefinition.ts';
-
-export type StorageAreaName = 'local' | 'sync';
+import type {
+  StorageAreaName,
+  StorageDefinition,
+} from '@lib/sharedStorage/storageDefinition.ts';
 
 export type StorageConnection<T> = {
   set: (value: T) => Promise<void>;
@@ -28,7 +29,6 @@ type ValueForKey<
 export const createStorageConnectionFactory = <
   Defs extends AnyStorageDefinitions,
 >(
-  storageAreaName: StorageAreaName,
   storageDefinitions: Defs,
   logger: Logger = noopLogger,
 ) => {
@@ -45,7 +45,6 @@ export const createStorageConnectionFactory = <
       throw new Error('storage definition not found');
     }
     return createUntypedStorageConnection<ValueForKey<Defs, K>>(
-      storageAreaName,
       storageDefinition,
       defaultValue,
       logger,
@@ -63,13 +62,12 @@ const getStorageArea = (storageAreaName: StorageAreaName) => {
 };
 
 const createUntypedStorageConnection = <T extends object>(
-  storageAreaName: StorageAreaName,
   storageDefinition: StorageDefinition<string, T>,
   defaultValue: T,
   logger: Logger,
 ): StorageConnection<T> => {
-  const storageArea = getStorageArea(storageAreaName);
-  const { key, schema } = storageDefinition;
+  const { key, schema, area = 'local' } = storageDefinition;
+  const storageArea = getStorageArea(area);
   const set = async (value: T): Promise<void> => {
     logger.debug({ key, value }, 'storageConnection: set');
     await storageArea.set({

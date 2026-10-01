@@ -3,7 +3,6 @@ import {logger} from '@shared/logger.ts';
 import {storageDefinitions} from '@shared/storage/storageDefinitions.ts';
 
 export const createStorageConnection = createStorageConnectionFactory(
-    'local',
     storageDefinitions,
     logger,
 );
