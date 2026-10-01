@@ -1,8 +1,5 @@
 import { type Logger, noopLogger } from '@lib/logger/logger.ts';
-import type {
-  StorageAreaName,
-  StorageDefinition,
-} from '@lib/sharedStorage/storageDefinition.ts';
+import type { StorageDefinition } from '@lib/sharedStorage/storageDefinition.ts';
 
 export type StorageConnection<T> = {
   set: (value: T) => Promise<void>;
@@ -13,13 +10,8 @@ type AnyStorageDefinitions = readonly StorageDefinition<string, object>[];
 
 type DefinitionForKey<
   Defs extends AnyStorageDefinitions,
-  K extends AnyStorageDefinitions[number]['key'],
-> = Extract<
-  Defs[number],
-  {
-    key: K;
-  }
->;
+  K extends Defs[number]['key'],
+> = Extract<Defs[number], { key: K }>;
 
 type ValueForKey<
   Defs extends AnyStorageDefinitions,
@@ -42,8 +34,9 @@ export const createStorageConnectionFactory = <
     const storageDefinition = storageDefinitions.find(isDefinitionForKey);
 
     if (!storageDefinition) {
-      throw new Error('storage definition not found');
+      throw new Error(`storage definition not found for key: ${key}`);
     }
+
     return createUntypedStorageConnection<ValueForKey<Defs, K>>(
       storageDefinition,
       defaultValue,
@@ -52,33 +45,22 @@ export const createStorageConnectionFactory = <
   };
 };
 
-const getStorageArea = (storageAreaName: StorageAreaName) => {
-  switch (storageAreaName) {
-    case 'local':
-      return chrome.storage.local;
-    case 'sync':
-      return chrome.storage.sync;
-  }
-};
-
 const createUntypedStorageConnection = <T extends object>(
   storageDefinition: StorageDefinition<string, T>,
   defaultValue: T,
   logger: Logger,
 ): StorageConnection<T> => {
   const { key, schema, area = 'local' } = storageDefinition;
-  const storageArea = getStorageArea(area);
+  const storageArea = chrome.storage[area];
+
   const set = async (value: T): Promise<void> => {
     logger.debug({ key, value }, 'storageConnection: set');
-    await storageArea.set({
-      [key]: JSON.parse(JSON.stringify(value)),
-    });
+    await storageArea.set({ [key]: JSON.parse(JSON.stringify(value)) });
   };
 
   const get = async (): Promise<T> => {
-    const result = await storageArea.get(key as string);
-
-    const storedValue = result[key as string];
+    const result = await storageArea.get(key);
+    const storedValue = result[key];
 
     if (storedValue !== undefined) {
       logger.debug(
@@ -95,8 +77,5 @@ const createUntypedStorageConnection = <T extends object>(
     return schema.parse(defaultValue);
   };
 
-  return {
-    set,
-    get,
-  };
+  return { set, get };
 };
