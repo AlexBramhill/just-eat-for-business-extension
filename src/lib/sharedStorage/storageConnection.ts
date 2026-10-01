@@ -1,6 +1,8 @@
 import { type Logger, noopLogger } from '@lib/logger/logger.ts';
 import type { StorageDefinition } from '@lib/sharedStorage/storageDefinition.ts';
 
+export type StorageAreaName = 'local' | 'sync';
+
 export type StorageConnection<T> = {
   set: (value: T) => Promise<void>;
   get: () => Promise<T>;
@@ -26,6 +28,7 @@ type ValueForKey<
 export const createStorageConnectionFactory = <
   Defs extends AnyStorageDefinitions,
 >(
+  storageAreaName: StorageAreaName,
   storageDefinitions: Defs,
   logger: Logger = noopLogger,
 ) => {
@@ -42,6 +45,7 @@ export const createStorageConnectionFactory = <
       throw new Error('storage definition not found');
     }
     return createUntypedStorageConnection<ValueForKey<Defs, K>>(
+      storageAreaName,
       storageDefinition,
       defaultValue,
       logger,
@@ -49,21 +53,32 @@ export const createStorageConnectionFactory = <
   };
 };
 
+const getStorageArea = (storageAreaName: StorageAreaName) => {
+  switch (storageAreaName) {
+    case 'local':
+      return chrome.storage.local;
+    case 'sync':
+      return chrome.storage.sync;
+  }
+};
+
 const createUntypedStorageConnection = <T extends object>(
+  storageAreaName: StorageAreaName,
   storageDefinition: StorageDefinition<string, T>,
   defaultValue: T,
   logger: Logger,
 ): StorageConnection<T> => {
+  const storageArea = getStorageArea(storageAreaName);
   const { key, schema } = storageDefinition;
   const set = async (value: T): Promise<void> => {
     logger.debug({ key, value }, 'storageConnection: set');
-    await chrome.storage.local.set({
+    await storageArea.set({
       [key]: JSON.parse(JSON.stringify(value)),
     });
   };
 
   const get = async (): Promise<T> => {
-    const result = await chrome.storage.local.get(key as string);
+    const result = await storageArea.get(key as string);
 
     const storedValue = result[key as string];
 
