@@ -74,7 +74,7 @@ const createUntypedStorageConnection = <T extends object>(
       { key, value: defaultValue },
       'storageConnection: get (default)',
     );
-    return schema.parse(defaultValue);
+    return defaultValue;
   };
 
   return { set, get };
