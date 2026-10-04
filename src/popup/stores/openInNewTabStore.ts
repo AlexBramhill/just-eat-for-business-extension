@@ -1,14 +1,10 @@
 import { createOptimisticStore } from '@lib/optimisticStore/optimisticStore.ts';
 import { logger } from '@shared/logger.ts';
 import { createStorageConnection } from '@shared/storage/storage.ts';
-import {
-  openInNewTabDefaultValue,
-  STORAGE_KEYS,
-} from '@shared/storage/storageDefinitions.ts';
+import { STORAGE_KEYS } from '@shared/storage/storageDefinitions.ts';
 
 const openInNewTabStorageConnection = createStorageConnection(
   STORAGE_KEYS.OPEN_IN_NEW_TAB,
-  openInNewTabDefaultValue,
 );
 
 export const openInNewTabStore = createOptimisticStore(

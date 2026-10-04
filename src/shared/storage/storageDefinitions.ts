@@ -11,10 +11,6 @@ export const OpenInNewTabStorageSchema = z.object({
   isEnabled: z.boolean(),
 });
 
-export const openInNewTabDefaultValue: OpenInNewTabStorage = {
-  isEnabled: true,
-};
-
 export const CartStorageItemSchema = z.object({
   orderId: z.string(),
   humanOrderId: z.number(),
@@ -32,11 +28,13 @@ export const storageDefinitions = createStorageDefinitions([
   {
     key: STORAGE_KEYS.OPEN_IN_NEW_TAB,
     schema: OpenInNewTabStorageSchema,
+    defaultValue: { isEnabled: true },
     area: 'local',
   },
   {
     key: STORAGE_KEYS.CART_CACHE,
     schema: CartCacheStorageSchema,
+    defaultValue: { date: new Date(0), value: [] },
     area: 'local',
   },
 ]);

@@ -1,15 +1,4 @@
 import { createStorageConnection } from '@shared/storage/storage.ts';
-import {
-  type CartCacheStorage,
-  STORAGE_KEYS,
-} from '@shared/storage/storageDefinitions.ts';
+import { STORAGE_KEYS } from '@shared/storage/storageDefinitions.ts';
 
-const cartCacheDefault: CartCacheStorage = {
-  date: new Date(0),
-  value: [],
-};
-
-export const cacheStore = createStorageConnection(
-  STORAGE_KEYS.CART_CACHE,
-  cartCacheDefault,
-);
+export const cacheStore = createStorageConnection(STORAGE_KEYS.CART_CACHE);

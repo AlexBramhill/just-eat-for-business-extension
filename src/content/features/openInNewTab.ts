@@ -14,7 +14,6 @@ import { logger } from '@shared/logger.ts';
 import { createStorageConnection } from '@shared/storage/storage.ts';
 import {
   type CartCacheStorage,
-  openInNewTabDefaultValue,
   STORAGE_KEYS,
 } from '@shared/storage/storageDefinitions.ts';
 import { z } from 'zod';
@@ -40,10 +39,7 @@ const getIdFromHumanId = (
 
 export const openInNewTab: Feature = {
   async shouldRun(): Promise<boolean> {
-    const store = createStorageConnection(
-      STORAGE_KEYS.OPEN_IN_NEW_TAB,
-      openInNewTabDefaultValue,
-    );
+    const store = createStorageConnection(STORAGE_KEYS.OPEN_IN_NEW_TAB);
     const isEnabled = (await store.get()).isEnabled;
     logger.debug({ isEnabled }, 'openInNewTab.shouldRun');
     return isEnabled;

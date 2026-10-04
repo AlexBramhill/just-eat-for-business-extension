@@ -26,7 +26,6 @@ export const createStorageConnectionFactory = <
 ) => {
   return <K extends Defs[number]['key']>(
     key: K,
-    defaultValue: ValueForKey<Defs, K>,
   ): StorageConnection<ValueForKey<Defs, K>> => {
     const isDefinitionForKey = (
       def: Defs[number],
@@ -39,7 +38,6 @@ export const createStorageConnectionFactory = <
 
     return createUntypedStorageConnection<ValueForKey<Defs, K>>(
       storageDefinition,
-      defaultValue,
       logger,
     );
   };
@@ -47,10 +45,9 @@ export const createStorageConnectionFactory = <
 
 const createUntypedStorageConnection = <T extends object>(
   storageDefinition: StorageDefinition<string, T>,
-  defaultValue: T,
   logger: Logger,
 ): StorageConnection<T> => {
-  const { key, schema, area = 'local' } = storageDefinition;
+  const { key, schema, defaultValue, area = 'local' } = storageDefinition;
   const storageArea = chrome.storage[area];
 
   const set = async (value: T): Promise<void> => {
